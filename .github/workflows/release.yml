@@ -1,0 +1,35 @@
+name: keyword-classifier-ui package publication
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  # We only have one dummy broken test, so we bypass this job.
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 16
+  #     - run: npm ci
+  #     - run: npm test
+
+  # Basic setup to publish Node package to Github Packages
+  # - Taken from https://docs.github.com/en/packages/quickstart
+  publish-gpr:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+      - run: npm ci
+      - run: npm publish # this command runs `prepare` script implicitly
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
